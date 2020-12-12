@@ -2,9 +2,14 @@
   "name": "react-drifter-stars",
   "version": "1.0.0",
   "description": "React version of stars by Cory Hughart",
-  "main": "dist/index.js",
+  "main": "build/index.js",
+  "module": "build/index.es.js",
+  "jsnext:main": "build/index.es.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -22,6 +27,11 @@
   },
   "homepage": "https://github.com/Devil7DK/react-drifter-stars#readme",
   "devDependencies": {
+    "rollup": "^2.34.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-typescript2": "^0.29.0",
     "typescript": "^4.1.3"
   }
 }
