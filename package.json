@@ -1,0 +1,24 @@
+{
+  "name": "react-drifter-stars",
+  "version": "1.0.0",
+  "description": "React version of stars by Cory Hughart",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Devil7DK/react-drifter-stars.git"
+  },
+  "keywords": [
+    "drifter",
+    "stars",
+    "react"
+  ],
+  "author": "Dineshkumar T (Devil7DK)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Devil7DK/react-drifter-stars/issues"
+  },
+  "homepage": "https://github.com/Devil7DK/react-drifter-stars#readme"
+}
