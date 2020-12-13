@@ -1,0 +1,29 @@
+export interface IDrifterStartsProps {
+    particleCount?: number;
+    flareCount?: number;
+    motion?: number;
+    color?: string;
+    particleSizeBase?: number;
+    particleSizeMultiplier?: number;
+    flareSizeBase?: number;
+    flareSizeMultiplier?: number;
+    lineWidth?: number;
+    linkChance?: number;
+    linkLengthMin?: number;
+    linkLengthMax?: number;
+    linkOpacity?: number;
+    linkFade?: number;
+    linkSpeed?: number;
+    glareAngle?: number;
+    glareOpacityMultiplier?: number;
+    renderParticles?: boolean;
+    renderParticleGlare?: boolean;
+    renderFlares?: boolean;
+    renderLinks?: boolean;
+    renderMesh?: boolean;
+    flickerSmoothing?: number;
+    blurSize?: number;
+    randomMotion?: boolean;
+    noiseLength?: number;
+    noiseStrength?: number;
+}
