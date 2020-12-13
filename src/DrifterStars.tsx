@@ -7,6 +7,9 @@ import { Flare, Link, Particle, Point } from './classes';
 import { IDrifterStarsProps } from './interface';
 import { noisePoint, position, random } from './utils';
 
+/**
+ * Drifter stars animation by @cr0ybot ported for React.
+ */
 export const DrifterStars: React.FC<IDrifterStarsProps> = ({
     color = '#FFEED4',
     noiseLength = 1000,
@@ -18,12 +21,12 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
     flareSizeBase = 100,
     flareSizeMultiplier = 100,
     lineWidth = 1,
-    linkChance = 75, // chance per frame of link, higher = smaller chance
-    linkLengthMin = 5, // min linked vertices
-    linkLengthMax = 7, // max linked vertices
-    linkOpacity = 0.25, // number between 0 & 1
-    linkFade = 90, // link fade-out frames
-    linkSpeed = 1, // distance a link travels in 1 frame
+    linkChance = 75,
+    linkLengthMin = 5,
+    linkLengthMax = 7,
+    linkOpacity = 0.25,
+    linkFade = 90,
+    linkSpeed = 1, //
     glareAngle = -60,
     glareOpacityMultiplier = 0.05,
     renderParticles = true,
@@ -31,7 +34,7 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
     renderFlares = true,
     renderLinks = true,
     renderMesh = false,
-    flickerSmoothing = 15, // higher = smoother flicker
+    flickerSmoothing = 15,
     blurSize = 0,
     randomMotion = true,
     noiseStrength = 1,
