@@ -1,6 +1,6 @@
 {
     "jsxSingleQuote": true,
-    "pringWidth": 250,
+    "printWidth": 250,
     "semi": true,
     "tabWidth": 4,
     "singleQuote": true
