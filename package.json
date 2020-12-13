@@ -2,9 +2,9 @@
     "name": "react-drifter-stars",
     "version": "1.0.0",
     "description": "React version of stars by Cory Hughart",
-    "main": "build/index.js",
-    "module": "build/index.es.js",
-    "jsnext:main": "build/index.es.js",
+    "main": "dist/index.js",
+    "module": "dist/index.es.js",
+    "jsnext:main": "dist/index.es.js",
     "files": [
         "dist"
     ],
@@ -47,6 +47,7 @@
         "react-dom": "^17.0.1",
         "rollup": "^2.34.2",
         "rollup-plugin-commonjs": "^10.1.0",
+        "rollup-plugin-css-only": "^3.0.0",
         "rollup-plugin-node-resolve": "^5.2.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "rollup-plugin-typescript2": "^0.29.0",
