@@ -44,19 +44,8 @@ export class Particle extends EntityWithLocation {
     }
 
     render() {
-        const pos = position(
-                this.canvas,
-                this.mouse,
-                this.nPos,
-                this.motion,
-                this.noiseStrength,
-                this.x,
-                this.y,
-                this.z
-            ),
-            r =
-                (this.z * this.particleSizeMultiplier + this.particleSizeBase) *
-                (sizeRatio(this.canvas) / 1000);
+        const pos = position(this.canvas, this.mouse, this.nPos, this.motion, this.noiseStrength, this.x, this.y, this.z),
+            r = (this.z * this.particleSizeMultiplier + this.particleSizeBase) * (sizeRatio(this.canvas) / 1000);
         let o = this.opacity;
 
         if (this.flicker) {
@@ -79,18 +68,7 @@ export class Particle extends EntityWithLocation {
         if (this.renderParticleGlare) {
             this.context.globalAlpha = o * this.glareOpacityMultiplier;
 
-            this.context.ellipse(
-                pos.x,
-                pos.y,
-                r * 100,
-                r,
-                (this.glareAngle -
-                    (this.nPos.x - 0.5) * this.noiseStrength * this.motion) *
-                    (Math.PI / 180),
-                0,
-                2 * Math.PI,
-                false
-            );
+            this.context.ellipse(pos.x, pos.y, r * 100, r, (this.glareAngle - (this.nPos.x - 0.5) * this.noiseStrength * this.motion) * (Math.PI / 180), 0, 2 * Math.PI, false);
 
             this.context.fill();
             this.context.closePath();

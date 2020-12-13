@@ -9,15 +9,7 @@ export class Entity {
     motion: number;
     noiseStrength: number;
 
-    constructor(
-        canvas: HTMLCanvasElement,
-        context: CanvasRenderingContext2D,
-        mouse: Point,
-        nPos: Point,
-        motion: number,
-        noiseStrength: number,
-        color: string
-    ) {
+    constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, mouse: Point, nPos: Point, motion: number, noiseStrength: number, color: string) {
         this.color = color;
         this.canvas = canvas;
         this.context = context;

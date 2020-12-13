@@ -81,18 +81,16 @@ export class Link extends Entity {
             case 0:
                 // Grab the last member of the link
                 const last = this.particles[this.verts[this.verts.length - 1]];
-                //console.log(JSON.stringify(last));
+
                 if (last && last.neighbors && last.neighbors.length > 0) {
                     // Grab a random neighbor
-                    const neighbor =
-                        last.neighbors[random(0, last.neighbors.length - 1)];
+                    const neighbor = last.neighbors[random(0, last.neighbors.length - 1)];
                     // If we haven't seen that particle before, add it to the link
                     if (this.verts.indexOf(neighbor) == -1) {
                         this.verts.push(neighbor);
                     }
                     // If we have seen that particle before, we'll just wait for the next frame
                 } else {
-                    //console.log(this.verts[0]+' prematurely moving to stage 3 (0)');
                     this.stage = 3;
                     this.finished = true;
                 }
@@ -108,10 +106,7 @@ export class Link extends Entity {
 
                         this.distances.push(dist);
                     }
-                    //console.log('Distances: '+JSON.stringify(this.distances));
-                    //console.log('verts: '+this.verts.length+' distances: '+this.distances.length);
 
-                    //console.log(this.verts[0]+' moving to stage 1');
                     this.stage = 1;
                 }
                 break;
@@ -125,78 +120,43 @@ export class Link extends Entity {
                     // Gather all points already linked
                     for (i = 0; i < this.linked.length; i++) {
                         p = this.particles[this.linked[i]];
-                        pos = position(
-                            this.canvas,
-                            this.mouse,
-                            this.nPos,
-                            this.motion,
-                            this.noiseStrength,
-                            p.x,
-                            p.y,
-                            p.z
-                        );
+                        pos = position(this.canvas, this.mouse, this.nPos, this.motion, this.noiseStrength, p.x, p.y, p.z);
                         points.push([pos.x, pos.y]);
                     }
 
-                    const linkSpeedRel =
-                        this.linkSpeed * 0.00001 * this.canvas.width;
+                    const linkSpeedRel = this.linkSpeed * 0.00001 * this.canvas.width;
                     this.traveled += linkSpeedRel;
                     const d = this.distances[this.linked.length - 1];
                     // Calculate last point based on linkSpeed and distance travelled to next point
                     if (this.traveled >= d) {
                         this.traveled = 0;
                         // We've reached the next point, add coordinates to array
-                        //console.log(this.verts[0]+' reached vertex '+(this.linked.length+1)+' of '+this.verts.length);
 
                         this.linked.push(this.verts[this.linked.length]);
                         p = this.particles[this.linked[this.linked.length - 1]];
-                        pos = position(
-                            this.canvas,
-                            this.mouse,
-                            this.nPos,
-                            this.motion,
-                            this.noiseStrength,
-                            p.x,
-                            p.y,
-                            p.z
-                        );
+                        pos = position(this.canvas, this.mouse, this.nPos, this.motion, this.noiseStrength, p.x, p.y, p.z);
                         points.push([pos.x, pos.y]);
 
                         if (this.linked.length >= this.verts.length) {
-                            //console.log(this.verts[0]+' moving to stage 2 (1)');
                             this.stage = 2;
                         }
                     } else {
                         // We're still travelling to the next point, get coordinates at travel distance
                         // http://math.stackexchange.com/a/85582
-                        const a = this.particles[
-                                this.linked[this.linked.length - 1]
-                            ],
+                        const a = this.particles[this.linked[this.linked.length - 1]],
                             b = this.particles[this.verts[this.linked.length]],
                             t = d - this.traveled,
                             x = (this.traveled * b.x + t * a.x) / d,
                             y = (this.traveled * b.y + t * a.y) / d,
                             z = (this.traveled * b.z + t * a.z) / d;
 
-                        pos = position(
-                            this.canvas,
-                            this.mouse,
-                            this.nPos,
-                            this.motion,
-                            this.noiseStrength,
-                            x,
-                            y,
-                            z
-                        );
-
-                        //console.log(this.verts[0]+' traveling to vertex '+(this.linked.length+1)+' of '+this.verts.length+' ('+this.traveled+' of '+this.distances[this.linked.length]+')');
+                        pos = position(this.canvas, this.mouse, this.nPos, this.motion, this.noiseStrength, x, y, z);
 
                         points.push([pos.x, pos.y]);
                     }
 
                     this.drawLine(points);
                 } else {
-                    //console.log(this.verts[0]+' prematurely moving to stage 3 (1)');
                     this.stage = 3;
                     this.finished = true;
                 }
@@ -210,30 +170,18 @@ export class Link extends Entity {
 
                         // Render full link between all vertices and fade over time
                         points = [];
-                        const alpha =
-                            (1 - this.fade / this.linkFade) * this.linkOpacity;
+                        const alpha = (1 - this.fade / this.linkFade) * this.linkOpacity;
                         for (i = 0; i < this.verts.length; i++) {
                             p = this.particles[this.verts[i]];
-                            pos = position(
-                                this.canvas,
-                                this.mouse,
-                                this.nPos,
-                                this.motion,
-                                this.noiseStrength,
-                                p.x,
-                                p.y,
-                                p.z
-                            );
+                            pos = position(this.canvas, this.mouse, this.nPos, this.motion, this.noiseStrength, p.x, p.y, p.z);
                             points.push([pos.x, pos.y]);
                         }
                         this.drawLine(points, alpha);
                     } else {
-                        //console.log(this.verts[0]+' moving to stage 3 (2a)');
                         this.stage = 3;
                         this.finished = true;
                     }
                 } else {
-                    //console.log(this.verts[0]+' prematurely moving to stage 3 (2b)');
                     this.stage = 3;
                     this.finished = true;
                 }

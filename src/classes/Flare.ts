@@ -6,17 +6,7 @@ export class Flare extends EntityWithLocation {
     flareSizeMultiplier: number;
     flareSizeBase: number;
 
-    constructor(
-        canvas: HTMLCanvasElement,
-        context: CanvasRenderingContext2D,
-        mouse: Point,
-        nPos: Point,
-        motion: number,
-        noiseStrength: number,
-        color: string,
-        flareSizeMultiplier: number,
-        flareSizeBase: number
-    ) {
+    constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, mouse: Point, nPos: Point, motion: number, noiseStrength: number, color: string, flareSizeMultiplier: number, flareSizeBase: number) {
         super(canvas, context, mouse, nPos, motion, noiseStrength, color);
 
         this.x = random(-0.25, 1.25, true);
@@ -29,19 +19,8 @@ export class Flare extends EntityWithLocation {
     }
 
     render() {
-        const pos = position(
-                this.canvas,
-                this.mouse,
-                this.nPos,
-                this.motion,
-                this.noiseStrength,
-                this.x,
-                this.y,
-                this.z
-            ),
-            r =
-                (this.z * this.flareSizeMultiplier + this.flareSizeBase) *
-                (sizeRatio(this.canvas) / 1000);
+        const pos = position(this.canvas, this.mouse, this.nPos, this.motion, this.noiseStrength, this.x, this.y, this.z),
+            r = (this.z * this.flareSizeMultiplier + this.flareSizeBase) * (sizeRatio(this.canvas) / 1000);
 
         this.context.beginPath();
         this.context.globalAlpha = this.opacity;
