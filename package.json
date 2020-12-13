@@ -10,7 +10,8 @@
     ],
     "scripts": {
         "build": "rollup -c",
-        "lint": "eslint src/**/*.{js,ts,tsx} --quiet --fix"
+        "lint": "eslint src/**/*.{js,ts,tsx} --quiet --fix",
+        "storybook": "start-storybook -p 6006"
     },
     "repository": {
         "type": "git",
@@ -28,10 +29,14 @@
     },
     "homepage": "https://github.com/Devil7DK/react-drifter-stars#readme",
     "devDependencies": {
+        "@babel/core": "^7.12.10",
+        "@storybook/react": "^6.1.11",
         "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",
         "@typescript-eslint/eslint-plugin": "^4.8.2",
         "@typescript-eslint/parser": "^4.8.2",
+        "awesome-typescript-loader": "^5.2.1",
+        "babel-loader": "^8.2.2",
         "eslint": "^6.8.0",
         "eslint-config-prettier": "^6.15.0",
         "eslint-plugin-prettier": "^3.1.4",
