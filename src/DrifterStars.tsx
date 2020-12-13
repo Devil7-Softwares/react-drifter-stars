@@ -228,8 +228,8 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
 
     function resize() {
         if (canvasRef.current) {
-            canvasRef.current.width = window.innerWidth * (window.devicePixelRatio || 1);
-            canvasRef.current.height = canvasRef.current.width * (canvasRef.current.clientHeight / canvasRef.current.clientWidth);
+            canvasRef.current.width = window.innerWidth;
+            canvasRef.current.height = window.innerHeight;
         }
     }
 
