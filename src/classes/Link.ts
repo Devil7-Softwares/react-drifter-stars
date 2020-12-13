@@ -1,6 +1,6 @@
-import { Particle } from './Particle';
-import { random, position } from '../utils';
+import { position, random } from '../utils';
 import { Entity } from './Entity';
+import { Particle } from './Particle';
 import { Point } from './Point';
 
 export class Link extends Entity {
@@ -55,7 +55,7 @@ export class Link extends Entity {
         if (points.length > 1 && alpha > 0) {
             this.context.globalAlpha = alpha;
             this.context.beginPath();
-            for (var i = 0; i < points.length - 1; i++) {
+            for (let i = 0; i < points.length - 1; i++) {
                 this.context.moveTo(points[i][0], points[i][1]);
                 this.context.lineTo(points[i + 1][0], points[i + 1][1]);
             }
@@ -74,17 +74,17 @@ export class Link extends Entity {
         // 2. Fade out
         // 3. Finished (delete me)
 
-        var i, p, pos: Point, points: number[][];
+        let i, p, pos: Point, points: number[][];
 
         switch (this.stage) {
             // VERTEX COLLECTION STAGE
             case 0:
                 // Grab the last member of the link
-                var last = this.particles[this.verts[this.verts.length - 1]];
+                const last = this.particles[this.verts[this.verts.length - 1]];
                 //console.log(JSON.stringify(last));
                 if (last && last.neighbors && last.neighbors.length > 0) {
                     // Grab a random neighbor
-                    var neighbor =
+                    const neighbor =
                         last.neighbors[random(0, last.neighbors.length - 1)];
                     // If we haven't seen that particle before, add it to the link
                     if (this.verts.indexOf(neighbor) == -1) {
@@ -100,7 +100,7 @@ export class Link extends Entity {
                 if (this.verts.length >= this.length) {
                     // Calculate all distances at once
                     for (i = 0; i < this.verts.length - 1; i++) {
-                        var p1 = this.particles[this.verts[i]],
+                        const p1 = this.particles[this.verts[i]],
                             p2 = this.particles[this.verts[i + 1]],
                             dx = p1.x - p2.x,
                             dy = p1.y - p2.y,
@@ -138,10 +138,10 @@ export class Link extends Entity {
                         points.push([pos.x, pos.y]);
                     }
 
-                    var linkSpeedRel =
+                    const linkSpeedRel =
                         this.linkSpeed * 0.00001 * this.canvas.width;
                     this.traveled += linkSpeedRel;
-                    var d = this.distances[this.linked.length - 1];
+                    const d = this.distances[this.linked.length - 1];
                     // Calculate last point based on linkSpeed and distance travelled to next point
                     if (this.traveled >= d) {
                         this.traveled = 0;
@@ -169,7 +169,7 @@ export class Link extends Entity {
                     } else {
                         // We're still travelling to the next point, get coordinates at travel distance
                         // http://math.stackexchange.com/a/85582
-                        var a = this.particles[
+                        const a = this.particles[
                                 this.linked[this.linked.length - 1]
                             ],
                             b = this.particles[this.verts[this.linked.length]],
@@ -210,7 +210,7 @@ export class Link extends Entity {
 
                         // Render full link between all vertices and fade over time
                         points = [];
-                        var alpha =
+                        const alpha =
                             (1 - this.fade / this.linkFade) * this.linkOpacity;
                         for (i = 0; i < this.verts.length; i++) {
                             p = this.particles[this.verts[i]];

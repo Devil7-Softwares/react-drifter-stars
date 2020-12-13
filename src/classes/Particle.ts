@@ -1,6 +1,6 @@
-import { Point } from './Point';
+import { position, random, sizeRatio } from '../utils';
 import { EntityWithLocation } from './EntityWithLocation';
-import { random, position, sizeRatio } from '../utils';
+import { Point } from './Point';
 
 export class Particle extends EntityWithLocation {
     flicker: number;
@@ -44,7 +44,7 @@ export class Particle extends EntityWithLocation {
     }
 
     render() {
-        var pos = position(
+        const pos = position(
                 this.canvas,
                 this.mouse,
                 this.nPos,
@@ -56,11 +56,11 @@ export class Particle extends EntityWithLocation {
             ),
             r =
                 (this.z * this.particleSizeMultiplier + this.particleSizeBase) *
-                (sizeRatio(this.canvas) / 1000),
-            o = this.opacity;
+                (sizeRatio(this.canvas) / 1000);
+        let o = this.opacity;
 
         if (this.flicker) {
-            var newVal = random(-0.5, 0.5, true);
+            const newVal = random(-0.5, 0.5, true);
             this.flicker += (newVal - this.flicker) / this.flickerSmoothing;
             if (this.flicker > 0.5) this.flicker = 0.5;
             if (this.flicker < -0.5) this.flicker = -0.5;

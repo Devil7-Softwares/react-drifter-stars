@@ -4,18 +4,14 @@ export function sizeRatio(canvas: HTMLCanvasElement): number {
     return canvas.width >= canvas.height ? canvas.width : canvas.height;
 }
 
-export function random(
-    min: number,
-    max: number,
-    float: boolean = false
-): number {
+export function random(min: number, max: number, float = false): number {
     return float
         ? Math.random() * (max - min) + min
         : Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export function noisePoint(nAngle: number, nRad: number, i: number): Point {
-    var a = nAngle * i,
+    const a = nAngle * i,
         cosA = Math.cos(a),
         sinA = Math.sin(a),
         rad = nRad;

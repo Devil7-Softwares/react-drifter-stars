@@ -1,6 +1,6 @@
-import { random, position, sizeRatio } from '../utils';
-import { Point } from './Point';
+import { position, random, sizeRatio } from '../utils';
 import { EntityWithLocation } from './EntityWithLocation';
+import { Point } from './Point';
 
 export class Flare extends EntityWithLocation {
     flareSizeMultiplier: number;
@@ -29,7 +29,7 @@ export class Flare extends EntityWithLocation {
     }
 
     render() {
-        var pos = position(
+        const pos = position(
                 this.canvas,
                 this.mouse,
                 this.nPos,

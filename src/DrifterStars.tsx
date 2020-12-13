@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, useState } from 'react';
-import Delaunay from 'delaunay-fast';
-
-import { IDrifterStartsProps } from './interface';
-import { Flare, Link, Particle, Point } from './classes';
-import { noisePoint, position, random } from './utils';
-
 import './css/styles.css';
+
+import Delaunay from 'delaunay-fast';
+import React, { useEffect, useRef, useState } from 'react';
+
+import { Flare, Link, Particle, Point } from './classes';
+import { IDrifterStartsProps } from './interface';
+import { noisePoint, position, random } from './utils';
 
 export const DrifterStars: React.FC<IDrifterStartsProps> = ({
     color = '#FFEED4',
@@ -54,18 +54,19 @@ export const DrifterStars: React.FC<IDrifterStartsProps> = ({
     useEffect(() => {
         let animationHandle = -1;
         if (canvas != null && context != null) {
-            var mouse: Point = { x: 0, y: 0 },
+            const mouse: Point = { x: 0, y: 0 },
                 c = 1000, // multiplier for delaunay points, since floats too small can mess up the algorithm
-                n = 0,
                 nAngle = (Math.PI * 2) / noiseLength,
                 nRad = 100,
-                nPos: Point = { x: 0, y: 0 },
                 points: number[][] = [],
-                vertices: number[] = [],
                 triangles: number[][] = [],
                 links: Link[] = [],
                 particles: Particle[] = [],
                 flares: Flare[] = [];
+
+            let n = 0,
+                nPos: Point = { x: 0, y: 0 },
+                vertices: number[] = [];
 
             function initialize() {
                 if (canvas && context) {
@@ -100,7 +101,7 @@ export const DrifterStars: React.FC<IDrifterStartsProps> = ({
                     vertices = Delaunay.triangulate(points);
 
                     // Create an array of "triangles" (groups of 3 indices)
-                    var tri = [];
+                    let tri = [];
                     for (let i = 0; i < vertices.length; i++) {
                         if (tri.length == 3) {
                             triangles.push(tri);
@@ -216,7 +217,7 @@ export const DrifterStars: React.FC<IDrifterStartsProps> = ({
 
                     if (renderParticles) {
                         // Render particles
-                        for (var i = 0; i < particleCount; i++) {
+                        for (let i = 0; i < particleCount; i++) {
                             particles[i].render();
                         }
                     }
@@ -224,16 +225,16 @@ export const DrifterStars: React.FC<IDrifterStartsProps> = ({
                     if (renderMesh) {
                         // Render all lines
                         context.beginPath();
-                        for (var v = 0; v < vertices.length - 1; v++) {
+                        for (let v = 0; v < vertices.length - 1; v++) {
                             // Splits the array into triplets
                             if ((v + 1) % 3 === 0) {
                                 continue;
                             }
 
-                            var p1 = particles[vertices[v]],
+                            const p1 = particles[vertices[v]],
                                 p2 = particles[vertices[v + 1]];
 
-                            var pos1 = position(
+                            const pos1 = position(
                                     canvas,
                                     mouse,
                                     nPos,
@@ -266,14 +267,14 @@ export const DrifterStars: React.FC<IDrifterStartsProps> = ({
                     if (renderLinks) {
                         // Possibly start a new link
                         if (random(0, linkChance) == linkChance) {
-                            var length = random(linkLengthMin, linkLengthMax);
-                            var start = random(0, particles.length - 1);
+                            const length = random(linkLengthMin, linkLengthMax);
+                            const start = random(0, particles.length - 1);
                             startLink(start, length);
                         }
 
                         // Render existing links
                         // Iterate in reverse so that removing items doesn't affect the loop
-                        for (var l = links.length - 1; l >= 0; l--) {
+                        for (let l = links.length - 1; l >= 0; l--) {
                             if (links[l] && !links[l].finished) {
                                 links[l].render();
                             } else {
@@ -284,7 +285,7 @@ export const DrifterStars: React.FC<IDrifterStartsProps> = ({
 
                     if (renderFlares) {
                         // Render flares
-                        for (var j = 0; j < flareCount; j++) {
+                        for (let j = 0; j < flareCount; j++) {
                             flares[j].render();
                         }
                     }
