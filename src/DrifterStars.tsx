@@ -254,5 +254,5 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
         };
     }, [canvasRef, canvasRef.current]);
 
-    return <canvas id='stars' width='300' height='300' ref={canvasRef}></canvas>;
+    return <canvas className='drifter-stars' width='300' height='300' ref={canvasRef}></canvas>;
 };
