@@ -4,10 +4,10 @@ import Delaunay from 'delaunay-fast';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Flare, Link, Particle, Point } from './classes';
-import { IDrifterStartsProps } from './interface';
+import { IDrifterStarsProps } from './interface';
 import { noisePoint, position, random } from './utils';
 
-export const DrifterStars: React.FC<IDrifterStartsProps> = ({
+export const DrifterStars: React.FC<IDrifterStarsProps> = ({
     color = '#FFEED4',
     noiseLength = 1000,
     particleCount = 40,
@@ -35,7 +35,7 @@ export const DrifterStars: React.FC<IDrifterStartsProps> = ({
     blurSize = 0,
     randomMotion = true,
     noiseStrength = 1,
-}: IDrifterStartsProps) => {
+}: IDrifterStarsProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const [canvas, setCanvas] = useState<HTMLCanvasElement | null>();

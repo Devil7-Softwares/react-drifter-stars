@@ -1,4 +1,4 @@
-export interface IDrifterStartsProps {
+export interface IDrifterStarsProps {
     particleCount?: number;
     flareCount?: number;
     motion?: number;
