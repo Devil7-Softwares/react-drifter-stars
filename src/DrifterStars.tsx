@@ -1,7 +1,7 @@
 import './css/styles.css';
 
 import Delaunay from 'delaunay-fast';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { MutableRefObject, useEffect, useRef } from 'react';
 
 import { Flare, Link, Particle, Point } from './classes';
 import { IDrifterStarsProps } from './interface';
@@ -37,305 +37,219 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
     noiseStrength = 1,
 }: IDrifterStarsProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const contextRef: MutableRefObject<CanvasRenderingContext2D | null> = useRef<CanvasRenderingContext2D>(null);
 
-    const [canvas, setCanvas] = useState<HTMLCanvasElement | null>();
-    const [context, setContext] = useState<CanvasRenderingContext2D | null>();
+    const animationHandleRef = useRef<number>(-1);
 
-    useEffect(() => {
-        setCanvas(canvasRef.current);
-    }, []);
+    const flaresRef: MutableRefObject<Flare[]> = useRef<Flare[]>([]);
+    const linksRef: MutableRefObject<Link[]> = useRef<Link[]>([]);
+    const particlesRef: MutableRefObject<Particle[]> = useRef<Particle[]>([]);
+    const verticesRef: MutableRefObject<number[]> = useRef<number[]>([]);
+    const mouseRef: MutableRefObject<Point> = useRef<Point>({ x: 0, y: 0 });
+    const noicePositionRef: MutableRefObject<Point> = useRef<Point>({ x: 0, y: 0 });
+    const noiseRef: MutableRefObject<number> = useRef<number>(0);
 
-    useEffect(() => {
-        if (canvas != null) {
-            setContext(canvas.getContext('2d'));
+    function initialize() {
+        if (canvasRef.current && contextRef.current) {
+            const points: number[][] = [];
+
+            flaresRef.current = [];
+            linksRef.current = [];
+            particlesRef.current = [];
+            noiseRef.current = 0;
+
+            resize();
+
+            mouseRef.current.x = canvasRef.current.clientWidth / 2;
+            mouseRef.current.y = canvasRef.current.clientHeight / 2;
+
+            // Create particle positions
+            for (let i = 0; i < particleCount; i++) {
+                const p: Particle = new Particle(
+                    canvasRef.current,
+                    contextRef.current,
+                    mouseRef.current,
+                    noicePositionRef.current,
+                    motion,
+                    noiseStrength,
+                    color,
+                    particleSizeMultiplier,
+                    particleSizeBase,
+                    flickerSmoothing,
+                    renderParticleGlare,
+                    glareOpacityMultiplier,
+                    glareAngle
+                );
+                particlesRef.current.push(p);
+                points.push([p.x * 1000, p.y * 1000]);
+            }
+
+            // Delaunay triangulation
+            verticesRef.current = Delaunay.triangulate(points);
+
+            // Create an array of "triangles" (groups of 3 indices)
+            const triangles: number[][] = [];
+            let trianglePoints = [];
+            for (let i = 0; i < verticesRef.current.length; i++) {
+                if (trianglePoints.length == 3) {
+                    triangles.push(trianglePoints);
+                    trianglePoints = [];
+                }
+                trianglePoints.push(verticesRef.current[i]);
+            }
+
+            // Tell all the particles who their neighbors are
+            for (let i = 0; i < particlesRef.current.length; i++) {
+                for (let j = 0; j < triangles.length; j++) {
+                    // Check if this particle's index is in this triangle
+                    // If it is, add its neighbors to the particles contacts list
+                    if (triangles[j].indexOf(i) !== -1) {
+                        triangles[j].forEach(function (value) {
+                            if (value !== i && particlesRef.current[i].neighbors.indexOf(value) == -1) {
+                                particlesRef.current[i].neighbors.push(value);
+                            }
+                        });
+                    }
+                }
+            }
+
+            if (renderFlares) {
+                for (let i = 0; i < flareCount; i++) {
+                    flaresRef.current.push(new Flare(canvasRef.current, contextRef.current, mouseRef.current, noicePositionRef.current, motion, noiseStrength, color, flareSizeMultiplier, flareSizeBase));
+                }
+            }
+
+            // Motion mode
+            if ('ontouchstart' in document.documentElement && window.DeviceOrientationEvent) {
+                window.addEventListener(
+                    'deviceorientation',
+                    function (e) {
+                        if (canvasRef.current && e.beta && e.gamma) {
+                            mouseRef.current.x = canvasRef.current.clientWidth / 2 - (e.gamma / 90) * (canvasRef.current.clientWidth / 2) * 2;
+                            mouseRef.current.y = canvasRef.current.clientHeight / 2 - (e.beta / 90) * (canvasRef.current.clientHeight / 2) * 2;
+                        }
+                    },
+                    true
+                );
+            } else {
+                document.body.addEventListener('mousemove', function (e) {
+                    mouseRef.current.x = e.clientX;
+                    mouseRef.current.y = e.clientY;
+                });
+            }
+
+            (function animloop() {
+                resize();
+                render();
+
+                animationHandleRef.current = requestAnimationFrame(animloop);
+            })();
         }
-    }, [canvas]);
+    }
+
+    function render() {
+        if (canvasRef.current && contextRef.current) {
+            if (randomMotion) {
+                noiseRef.current++;
+                if (noiseRef.current >= noiseLength) {
+                    noiseRef.current = 0;
+                }
+
+                const nPos = noisePoint((Math.PI * 2) / noiseLength, 100, noiseRef.current);
+                noicePositionRef.current.x = nPos.x;
+                noicePositionRef.current.y = nPos.y;
+            }
+
+            contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
+            if (blurSize > 0) {
+                contextRef.current.shadowBlur = blurSize;
+                contextRef.current.shadowColor = color;
+            }
+
+            if (renderParticles && particlesRef.current) {
+                for (let i = 0; i < particleCount; i++) {
+                    particlesRef.current[i].render();
+                }
+            }
+
+            if (renderMesh && particlesRef.current) {
+                contextRef.current.beginPath();
+                for (let v = 0; v < verticesRef.current.length - 1; v++) {
+                    // Splits the array into triplets
+                    if ((v + 1) % 3 === 0) {
+                        continue;
+                    }
+
+                    const p1 = particlesRef.current[verticesRef.current[v]],
+                        p2 = particlesRef.current[verticesRef.current[v + 1]];
+
+                    const pos1 = position(canvasRef.current, mouseRef.current || { x: 0, y: 0 }, noicePositionRef.current, motion, noiseStrength, p1.x, p1.y, p1.z),
+                        pos2 = position(canvasRef.current, mouseRef.current || { x: 0, y: 0 }, noicePositionRef.current, motion, noiseStrength, p2.x, p2.y, p2.z);
+
+                    contextRef.current.moveTo(pos1.x, pos1.y);
+                    contextRef.current.lineTo(pos2.x, pos2.y);
+                }
+                contextRef.current.strokeStyle = color;
+                contextRef.current.lineWidth = lineWidth;
+                contextRef.current.stroke();
+                contextRef.current.closePath();
+            }
+
+            if (renderLinks && particlesRef.current && linksRef.current) {
+                // Possibly start a new link
+                if (random(0, linkChance) == linkChance) {
+                    const length = random(linkLengthMin, linkLengthMax);
+                    const start = random(0, particlesRef.current.length - 1);
+                    startLink(start, length);
+                }
+
+                // Render existing links
+                // Iterate in reverse so that removing items doesn't affect the loop
+                for (let l = linksRef.current.length - 1; l >= 0; l--) {
+                    if (linksRef.current[l] && !linksRef.current[l].finished) {
+                        linksRef.current[l].render();
+                    } else {
+                        delete linksRef.current[l];
+                    }
+                }
+            }
+
+            if (renderFlares && flaresRef.current) {
+                for (let j = 0; j < flareCount; j++) {
+                    flaresRef.current[j].render();
+                }
+            }
+        }
+    }
+
+    function resize() {
+        if (canvasRef.current) {
+            canvasRef.current.width = window.innerWidth * (window.devicePixelRatio || 1);
+            canvasRef.current.height = canvasRef.current.width * (canvasRef.current.clientHeight / canvasRef.current.clientWidth);
+        }
+    }
+
+    function startLink(vertex: number, length: number) {
+        if (canvasRef.current && contextRef.current && particlesRef.current) {
+            linksRef.current.push(
+                new Link(canvasRef.current, contextRef.current, mouseRef.current || { x: 0, y: 0 }, noicePositionRef.current, motion, noiseStrength, color, vertex, length, particlesRef.current, linkSpeed, linkFade, linkOpacity, lineWidth)
+            );
+        }
+    }
 
     useEffect(() => {
-        let animationHandle = -1;
-        if (canvas != null && context != null) {
-            const mouse: Point = { x: 0, y: 0 },
-                c = 1000, // multiplier for delaunay points, since floats too small can mess up the algorithm
-                nAngle = (Math.PI * 2) / noiseLength,
-                nRad = 100,
-                points: number[][] = [],
-                triangles: number[][] = [],
-                links: Link[] = [],
-                particles: Particle[] = [],
-                flares: Flare[] = [];
-
-            let n = 0,
-                nPos: Point = { x: 0, y: 0 },
-                vertices: number[] = [];
-
-            function initialize() {
-                if (canvas && context) {
-                    // Size canvas
-                    resize();
-
-                    mouse.x = canvas.clientWidth / 2;
-                    mouse.y = canvas.clientHeight / 2;
-
-                    // Create particle positions
-                    for (let i = 0; i < particleCount; i++) {
-                        const p: Particle = new Particle(
-                            canvas,
-                            context,
-                            mouse,
-                            nPos,
-                            motion,
-                            noiseStrength,
-                            color,
-                            particleSizeMultiplier,
-                            particleSizeBase,
-                            flickerSmoothing,
-                            renderParticleGlare,
-                            glareOpacityMultiplier,
-                            glareAngle
-                        );
-                        particles.push(p);
-                        points.push([p.x * c, p.y * c]);
-                    }
-
-                    // Delaunay triangulation
-                    vertices = Delaunay.triangulate(points);
-
-                    // Create an array of "triangles" (groups of 3 indices)
-                    let tri = [];
-                    for (let i = 0; i < vertices.length; i++) {
-                        if (tri.length == 3) {
-                            triangles.push(tri);
-                            tri = [];
-                        }
-                        tri.push(vertices[i]);
-                    }
-
-                    // Tell all the particles who their neighbors are
-                    for (let i = 0; i < particles.length; i++) {
-                        // Loop through all tirangles
-                        for (let j = 0; j < triangles.length; j++) {
-                            // Check if this particle's index is in this triangle
-                            // If it is, add its neighbors to the particles contacts list
-                            if (triangles[j].indexOf(i) !== -1) {
-                                triangles[j].forEach(function (value) {
-                                    if (
-                                        value !== i &&
-                                        particles[i].neighbors.indexOf(value) ==
-                                            -1
-                                    ) {
-                                        particles[i].neighbors.push(value);
-                                    }
-                                });
-                            }
-                        }
-                    }
-
-                    if (renderFlares) {
-                        // Create flare positions
-                        for (let i = 0; i < flareCount; i++) {
-                            flares.push(
-                                new Flare(
-                                    canvas,
-                                    context,
-                                    mouse,
-                                    nPos,
-                                    motion,
-                                    noiseStrength,
-                                    color,
-                                    flareSizeMultiplier,
-                                    flareSizeBase
-                                )
-                            );
-                        }
-                    }
-
-                    // Motion mode
-                    //if (Modernizr && Modernizr.deviceorientation) {
-                    if (
-                        'ontouchstart' in document.documentElement &&
-                        window.DeviceOrientationEvent
-                    ) {
-                        console.log('Using device orientation');
-                        window.addEventListener(
-                            'deviceorientation',
-                            function (e) {
-                                if (e.beta && e.gamma) {
-                                    mouse.x =
-                                        canvas.clientWidth / 2 -
-                                        (e.gamma / 90) *
-                                            (canvas.clientWidth / 2) *
-                                            2;
-                                    mouse.y =
-                                        canvas.clientHeight / 2 -
-                                        (e.beta / 90) *
-                                            (canvas.clientHeight / 2) *
-                                            2;
-                                }
-                            },
-                            true
-                        );
-                    } else {
-                        // Mouse move listener
-                        console.log('Using mouse movement');
-                        document.body.addEventListener(
-                            'mousemove',
-                            function (e) {
-                                mouse.x = e.clientX;
-                                mouse.y = e.clientY;
-                            }
-                        );
-                    }
-
-                    // Animation loop
-                    (function animloop() {
-                        resize();
-                        render();
-
-                        animationHandle = requestAnimationFrame(animloop);
-                    })();
-                }
-            }
-
-            function render() {
-                if (canvas && context) {
-                    if (randomMotion) {
-                        n++;
-                        if (n >= noiseLength) {
-                            n = 0;
-                        }
-
-                        nPos = noisePoint(nAngle, nRad, n);
-                    }
-
-                    // Clear
-                    context.clearRect(0, 0, canvas.width, canvas.height);
-
-                    if (blurSize > 0) {
-                        context.shadowBlur = blurSize;
-                        context.shadowColor = color;
-                    }
-
-                    if (renderParticles) {
-                        // Render particles
-                        for (let i = 0; i < particleCount; i++) {
-                            particles[i].render();
-                        }
-                    }
-
-                    if (renderMesh) {
-                        // Render all lines
-                        context.beginPath();
-                        for (let v = 0; v < vertices.length - 1; v++) {
-                            // Splits the array into triplets
-                            if ((v + 1) % 3 === 0) {
-                                continue;
-                            }
-
-                            const p1 = particles[vertices[v]],
-                                p2 = particles[vertices[v + 1]];
-
-                            const pos1 = position(
-                                    canvas,
-                                    mouse,
-                                    nPos,
-                                    motion,
-                                    noiseStrength,
-                                    p1.x,
-                                    p1.y,
-                                    p1.z
-                                ),
-                                pos2 = position(
-                                    canvas,
-                                    mouse,
-                                    nPos,
-                                    motion,
-                                    noiseStrength,
-                                    p2.x,
-                                    p2.y,
-                                    p2.z
-                                );
-
-                            context.moveTo(pos1.x, pos1.y);
-                            context.lineTo(pos2.x, pos2.y);
-                        }
-                        context.strokeStyle = color;
-                        context.lineWidth = lineWidth;
-                        context.stroke();
-                        context.closePath();
-                    }
-
-                    if (renderLinks) {
-                        // Possibly start a new link
-                        if (random(0, linkChance) == linkChance) {
-                            const length = random(linkLengthMin, linkLengthMax);
-                            const start = random(0, particles.length - 1);
-                            startLink(start, length);
-                        }
-
-                        // Render existing links
-                        // Iterate in reverse so that removing items doesn't affect the loop
-                        for (let l = links.length - 1; l >= 0; l--) {
-                            if (links[l] && !links[l].finished) {
-                                links[l].render();
-                            } else {
-                                delete links[l];
-                            }
-                        }
-                    }
-
-                    if (renderFlares) {
-                        // Render flares
-                        for (let j = 0; j < flareCount; j++) {
-                            flares[j].render();
-                        }
-                    }
-                }
-            }
-
-            function resize() {
-                if (canvas) {
-                    canvas.width =
-                        window.innerWidth * (window.devicePixelRatio || 1);
-                    canvas.height =
-                        canvas.width *
-                        (canvas.clientHeight / canvas.clientWidth);
-                }
-            }
-
-            function startLink(vertex: number, length: number) {
-                if (canvas && context) {
-                    links.push(
-                        new Link(
-                            canvas,
-                            context,
-                            mouse,
-                            nPos,
-                            motion,
-                            noiseStrength,
-                            color,
-                            vertex,
-                            length,
-                            particles,
-                            linkSpeed,
-                            linkFade,
-                            linkOpacity,
-                            lineWidth
-                        )
-                    );
-                }
-            }
-
+        if (canvasRef != null && canvasRef.current != null) {
+            contextRef.current = canvasRef.current.getContext('2d');
             initialize();
         }
 
         return () => {
-            if (animationHandle != -1) {
-                cancelAnimationFrame(animationHandle);
+            if (animationHandleRef.current != -1) {
+                cancelAnimationFrame(animationHandleRef.current);
             }
         };
-    }, [context]);
+    }, [canvasRef, canvasRef.current]);
 
-    return (
-        <canvas id='stars' width='300' height='300' ref={canvasRef}></canvas>
-    );
+    return <canvas id='stars' width='300' height='300' ref={canvasRef}></canvas>;
 };
