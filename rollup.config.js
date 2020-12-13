@@ -25,7 +25,7 @@ export default {
     plugins: [
         external(),
         resolve(),
-        css({ output: 'bundle.css' }),
+        css({ output: 'styles.css' }),
         typescript({
             rollupCommonJSResolveHack: true,
             exclude: '**/__tests__/**',
