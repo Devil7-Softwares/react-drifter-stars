@@ -7,38 +7,40 @@ import { Flare, Link, Particle, Point } from './classes';
 import { IDrifterStarsProps } from './interface';
 import { noisePoint, position, random } from './utils';
 
+const defaultProps = {
+    color: '#FFEED4',
+    noiseLength: 1000,
+    particleCount: 40,
+    flareCount: 10,
+    motion: 0.05,
+    particleSizeBase: 1,
+    particleSizeMultiplier: 0.5,
+    flareSizeBase: 100,
+    flareSizeMultiplier: 100,
+    lineWidth: 1,
+    linkChance: 75,
+    linkLengthMin: 5,
+    linkLengthMax: 7,
+    linkOpacity: 0.25,
+    linkFade: 90,
+    linkSpeed: 1, //
+    glareAngle: -60,
+    glareOpacityMultiplier: 0.05,
+    renderParticles: true,
+    renderParticleGlare: true,
+    renderFlares: true,
+    renderLinks: true,
+    renderMesh: false,
+    flickerSmoothing: 15,
+    blurSize: 0,
+    randomMotion: true,
+    noiseStrength: 1,
+};
+
 /**
  * Drifter stars animation by @cr0ybot ported for React.
  */
-export const DrifterStars: React.FC<IDrifterStarsProps> = ({
-    color = '#FFEED4',
-    noiseLength = 1000,
-    particleCount = 40,
-    flareCount = 10,
-    motion = 0.05,
-    particleSizeBase = 1,
-    particleSizeMultiplier = 0.5,
-    flareSizeBase = 100,
-    flareSizeMultiplier = 100,
-    lineWidth = 1,
-    linkChance = 75,
-    linkLengthMin = 5,
-    linkLengthMax = 7,
-    linkOpacity = 0.25,
-    linkFade = 90,
-    linkSpeed = 1, //
-    glareAngle = -60,
-    glareOpacityMultiplier = 0.05,
-    renderParticles = true,
-    renderParticleGlare = true,
-    renderFlares = true,
-    renderLinks = true,
-    renderMesh = false,
-    flickerSmoothing = 15,
-    blurSize = 0,
-    randomMotion = true,
-    noiseStrength = 1,
-}: IDrifterStarsProps) => {
+export const DrifterStars: React.FC<IDrifterStarsProps> = ({ color, flare, glare, links, motion, particle, blurSize, renderMesh }: IDrifterStarsProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const contextRef: MutableRefObject<CanvasRenderingContext2D | null> = useRef<CanvasRenderingContext2D>(null);
 
@@ -67,21 +69,21 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
             mouseRef.current.y = canvasRef.current.clientHeight / 2;
 
             // Create particle positions
-            for (let i = 0; i < particleCount; i++) {
+            for (let i = 0; i < (particle?.count || defaultProps.particleCount); i++) {
                 const p: Particle = new Particle(
                     canvasRef.current,
                     contextRef.current,
                     mouseRef.current,
                     noicePositionRef.current,
-                    motion,
-                    noiseStrength,
-                    color,
-                    particleSizeMultiplier,
-                    particleSizeBase,
-                    flickerSmoothing,
-                    renderParticleGlare,
-                    glareOpacityMultiplier,
-                    glareAngle
+                    motion?.ratio || defaultProps.motion,
+                    motion?.noiseStrength || defaultProps.noiseStrength,
+                    color || defaultProps.color,
+                    particle?.sizeMultiplier || defaultProps.particleSizeMultiplier,
+                    particle?.sizeBase || defaultProps.particleSizeBase,
+                    particle?.flickerSmoothing || defaultProps.flickerSmoothing,
+                    glare?.render || defaultProps.renderParticleGlare,
+                    glare?.opacityMultiplier || defaultProps.glareOpacityMultiplier,
+                    glare?.angle || defaultProps.glareAngle
                 );
                 particlesRef.current.push(p);
                 points.push([p.x * 1000, p.y * 1000]);
@@ -116,9 +118,21 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
                 }
             }
 
-            if (renderFlares) {
-                for (let i = 0; i < flareCount; i++) {
-                    flaresRef.current.push(new Flare(canvasRef.current, contextRef.current, mouseRef.current, noicePositionRef.current, motion, noiseStrength, color, flareSizeMultiplier, flareSizeBase));
+            if (flare?.render) {
+                for (let i = 0; i < (flare?.count || defaultProps.flareCount); i++) {
+                    flaresRef.current.push(
+                        new Flare(
+                            canvasRef.current,
+                            contextRef.current,
+                            mouseRef.current,
+                            noicePositionRef.current,
+                            motion?.ratio || defaultProps.motion,
+                            motion?.noiseStrength || defaultProps.noiseStrength,
+                            color || defaultProps.color,
+                            flare.sizeMultiplier || defaultProps.flareSizeMultiplier,
+                            flare.sizeBase || defaultProps.flareSizeBase
+                        )
+                    );
                 }
             }
 
@@ -152,26 +166,26 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
 
     function render() {
         if (canvasRef.current && contextRef.current) {
-            if (randomMotion) {
+            if ((motion?.randomMotion == undefined && defaultProps.randomMotion) || motion?.randomMotion) {
                 noiseRef.current++;
-                if (noiseRef.current >= noiseLength) {
+                if (noiseRef.current >= (motion?.noiseLength || defaultProps.noiseLength)) {
                     noiseRef.current = 0;
                 }
 
-                const nPos = noisePoint((Math.PI * 2) / noiseLength, 100, noiseRef.current);
+                const nPos = noisePoint((Math.PI * 2) / (motion?.noiseLength || defaultProps.noiseLength), 100, noiseRef.current);
                 noicePositionRef.current.x = nPos.x;
                 noicePositionRef.current.y = nPos.y;
             }
 
             contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-            if (blurSize > 0) {
-                contextRef.current.shadowBlur = blurSize;
-                contextRef.current.shadowColor = color;
+            if ((blurSize || defaultProps.blurSize) > 0) {
+                contextRef.current.shadowBlur = blurSize || defaultProps.blurSize;
+                contextRef.current.shadowColor = color || defaultProps.color;
             }
 
-            if (renderParticles && particlesRef.current) {
-                for (let i = 0; i < particleCount; i++) {
+            if (((particle?.render == undefined && defaultProps.renderParticles) || particle?.render) && particlesRef.current) {
+                for (let i = 0; i < (particle?.count || defaultProps.particleCount); i++) {
                     particlesRef.current[i].render();
                 }
             }
@@ -187,22 +201,23 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
                     const p1 = particlesRef.current[verticesRef.current[v]],
                         p2 = particlesRef.current[verticesRef.current[v + 1]];
 
-                    const pos1 = position(canvasRef.current, mouseRef.current || { x: 0, y: 0 }, noicePositionRef.current, motion, noiseStrength, p1.x, p1.y, p1.z),
-                        pos2 = position(canvasRef.current, mouseRef.current || { x: 0, y: 0 }, noicePositionRef.current, motion, noiseStrength, p2.x, p2.y, p2.z);
+                    const pos1 = position(canvasRef.current, mouseRef.current || { x: 0, y: 0 }, noicePositionRef.current, motion?.ratio || defaultProps.motion, motion?.noiseStrength || defaultProps.noiseStrength, p1.x, p1.y, p1.z),
+                        pos2 = position(canvasRef.current, mouseRef.current || { x: 0, y: 0 }, noicePositionRef.current, motion?.ratio || defaultProps.motion, motion?.noiseStrength || defaultProps.noiseStrength, p2.x, p2.y, p2.z);
 
                     contextRef.current.moveTo(pos1.x, pos1.y);
                     contextRef.current.lineTo(pos2.x, pos2.y);
                 }
-                contextRef.current.strokeStyle = color;
-                contextRef.current.lineWidth = lineWidth;
+                contextRef.current.strokeStyle = color || defaultProps.color;
+                contextRef.current.lineWidth = links?.lineWidth || defaultProps.lineWidth;
                 contextRef.current.stroke();
                 contextRef.current.closePath();
             }
 
-            if (renderLinks && particlesRef.current && linksRef.current) {
+            if (((links?.render == undefined && defaultProps.renderLinks) || links?.render) && particlesRef.current && linksRef.current) {
                 // Possibly start a new link
+                const linkChance = links?.chance || defaultProps.linkChance;
                 if (random(0, linkChance) == linkChance) {
-                    const length = random(linkLengthMin, linkLengthMax);
+                    const length = random(links?.minLength || defaultProps.linkLengthMin, links?.maxLength || defaultProps.linkLengthMax);
                     const start = random(0, particlesRef.current.length - 1);
                     startLink(start, length);
                 }
@@ -218,8 +233,8 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
                 }
             }
 
-            if (renderFlares && flaresRef.current) {
-                for (let j = 0; j < flareCount; j++) {
+            if (((flare?.render == undefined && defaultProps.renderFlares) || flare?.render) && flaresRef.current) {
+                for (let j = 0; j < flaresRef.current.length; j++) {
                     flaresRef.current[j].render();
                 }
             }
@@ -236,7 +251,22 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({
     function startLink(vertex: number, length: number) {
         if (canvasRef.current && contextRef.current && particlesRef.current) {
             linksRef.current.push(
-                new Link(canvasRef.current, contextRef.current, mouseRef.current || { x: 0, y: 0 }, noicePositionRef.current, motion, noiseStrength, color, vertex, length, particlesRef.current, linkSpeed, linkFade, linkOpacity, lineWidth)
+                new Link(
+                    canvasRef.current,
+                    contextRef.current,
+                    mouseRef.current || { x: 0, y: 0 },
+                    noicePositionRef.current,
+                    motion?.ratio || defaultProps.motion,
+                    motion?.noiseStrength || defaultProps.noiseStrength,
+                    color || defaultProps.color,
+                    vertex,
+                    length,
+                    particlesRef.current,
+                    links?.speed || defaultProps.linkSpeed,
+                    links?.fade || defaultProps.linkFade,
+                    links?.opacity || defaultProps.linkOpacity,
+                    links?.lineWidth || defaultProps.lineWidth
+                )
             );
         }
     }
