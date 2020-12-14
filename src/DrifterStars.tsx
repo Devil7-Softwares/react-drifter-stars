@@ -40,7 +40,9 @@ const defaultProps = {
 /**
  * Drifter stars animation by @cr0ybot ported for React.
  */
-export const DrifterStars: React.FC<IDrifterStarsProps> = ({ color, flare, glare, links, motion, particle, blurSize, renderMesh }: IDrifterStarsProps) => {
+export const DrifterStars: React.FC<IDrifterStarsProps> = (props: IDrifterStarsProps) => {
+    const { color, flare, glare, links, motion, particle, blurSize, renderMesh } = props;
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const contextRef: MutableRefObject<CanvasRenderingContext2D | null> = useRef<CanvasRenderingContext2D>(null);
 
@@ -282,7 +284,7 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = ({ color, flare, glare
                 cancelAnimationFrame(animationHandleRef.current);
             }
         };
-    }, [canvasRef, canvasRef.current]);
+    }, [canvasRef, canvasRef.current, props]);
 
     return <canvas className='drifter-stars' width='300' height='300' ref={canvasRef}></canvas>;
 };
