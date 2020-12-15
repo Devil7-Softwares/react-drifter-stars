@@ -25,3 +25,5 @@ export function position(canvas: HTMLCanvasElement, mouse: Point, nPos: Point, m
         y: y * canvas.height + (canvas.height / 2 - mouse.y + (nPos.y - 0.5) * noiseStrength) * z * motion,
     };
 }
+
+export * from './Delaynay';
