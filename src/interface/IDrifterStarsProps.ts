@@ -16,7 +16,7 @@ export interface IDrifterStarsProps {
     renderMesh?: boolean;
 
     /**
-     * Size of blur.
+     * Size of blur for overall canvas.
      */
     blurSize?: number;
 
