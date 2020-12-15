@@ -1,11 +1,10 @@
 import './css/styles.css';
 
-import Delaunay from 'delaunay-fast';
 import React, { MutableRefObject, useEffect, useRef } from 'react';
 
 import { Flare, Link, Particle, Point } from './classes';
 import { IDrifterStarsProps } from './interface';
-import { noisePoint, position, random } from './utils';
+import { Delaunay, noisePoint, position, random } from './utils';
 
 const defaultProps = {
     color: '#FFEED4',
