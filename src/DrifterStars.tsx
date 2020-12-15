@@ -83,7 +83,7 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = (props: IDrifterStarsP
                     particle?.sizeMultiplier || defaultProps.particleSizeMultiplier,
                     particle?.sizeBase || defaultProps.particleSizeBase,
                     particle?.flickerSmoothing || defaultProps.flickerSmoothing,
-                    glare?.render || defaultProps.renderParticleGlare,
+                    glare?.render == undefined ? defaultProps.renderParticleGlare : glare?.render,
                     glare?.opacityMultiplier || defaultProps.glareOpacityMultiplier,
                     glare?.angle || defaultProps.glareAngle
                 );
