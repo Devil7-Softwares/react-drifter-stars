@@ -1,6 +1,6 @@
 {
     "name": "@devil7softwares/react-drifter-stars",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "React version of Drifter Stars by Cory Hughart",
     "main": "dist/index.js",
     "module": "dist/index.es.js",
