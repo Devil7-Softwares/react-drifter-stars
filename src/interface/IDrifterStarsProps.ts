@@ -1,10 +1,12 @@
+import { HTMLAttributes } from 'react';
+
 import { IFlareOptions } from './IFlareOptions';
 import { IGlareOptions } from './IGlareOptions';
 import { ILinkOptions } from './ILinkOptions';
 import { IMotionOptions } from './IMotionOptions';
 import { IParticleOptions } from './IParticleOptions';
 
-export interface IDrifterStarsProps {
+export interface IDrifterStarsProps extends HTMLAttributes<HTMLCanvasElement> {
     /**
      * Color of particles, flare & lines.
      */
