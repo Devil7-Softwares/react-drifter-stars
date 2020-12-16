@@ -1,5 +1,5 @@
 
-# React Drifter Stars ![build](https://github.com/Devil7-Softwares/react-drifter-stars/workflows/build/badge.svg)
+# React Drifter Stars ![build](https://github.com/Devil7-Softwares/react-drifter-stars/workflows/build/badge.svg) ![npm](https://img.shields.io/npm/v/@devil7softwares/react-drifter-stars) ![license](https://img.shields.io/npm/l/@devil7softwares/react-drifter-stars) ![min](https://img.shields.io/bundlephobia/min/@devil7softwares/react-drifter-stars) ![minzip](https://img.shields.io/bundlephobia/minzip/@devil7softwares/react-drifter-stars)
 `Drifter Stars by @cr0ybot ported to React with Typescript support`
 
 ## Quick Start
