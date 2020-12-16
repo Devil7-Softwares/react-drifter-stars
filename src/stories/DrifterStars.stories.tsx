@@ -1,9 +1,12 @@
+import '../css/stories.css';
+
 import React from 'react';
 
 import { DrifterStars } from '../DrifterStars';
 
 const StarsStory = (args: Args) => (
     <DrifterStars
+        className={args.className}
         color={args.color}
         motion={{
             ratio: args.motionRatio,
@@ -45,6 +48,7 @@ const StarsStory = (args: Args) => (
 );
 
 interface Args {
+    className: string | undefined;
     color: string;
     noiseLength: number;
     particleCount: number;
@@ -104,6 +108,9 @@ Basic.args = {
     randomMotion: true,
     noiseStrength: 1,
 };
+
+export const CustomBackground = StarsStory.bind({});
+CustomBackground.args = { ...Basic.args, className: 'stories-gradiant' };
 
 export default {
     title: 'Drifter Stars',
