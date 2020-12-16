@@ -21,6 +21,11 @@ export default {
             exports: 'named',
             sourcemap: true,
         },
+        {
+            file: pkg.umd,
+            format: 'umd',
+            name: 'DrifterStars',
+        }
     ],
     plugins: [
         external(),

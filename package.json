@@ -4,6 +4,7 @@
     "description": "React version of Drifter Stars by Cory Hughart",
     "main": "dist/index.js",
     "module": "dist/index.es.js",
+    "umd": "dist/index.umd.js",
     "jsnext:main": "dist/index.es.js",
     "types": "dist/index.d.ts",
     "files": [
