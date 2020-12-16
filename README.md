@@ -1,16 +1,16 @@
 
-# React Drifter Stars
+# React Drifter Stars ![build](https://github.com/Devil7-Softwares/react-drifter-stars/workflows/build/badge.svg)
 `Drifter Stars by @cr0ybot ported to React with Typescript support`
 
 ## Quick Start
 1. Install package from NPM
-`npm install react-drifter-stars`
+`npm install @devil7softwares/react-drifter-stars`
 2. Import drifter stars in your component
-`import DrifterStars from 'react-drifter-stars'`
+`import DrifterStars from '@devil7softwares/react-drifter-stars'`
 3. Add component to your JSX/TSX
 `<DrifterStars />`
 4. Import default stylesheet from package for default background. Or use your own css.
-`import 'react-drifter-stars/dist/styles.css'`
+`import '@devil7softwares/react-drifter-stars/dist/styles.css'`
 
 > Note: The component is transparent by default and takes full width and height of window. And can be used with your existing background.
 
