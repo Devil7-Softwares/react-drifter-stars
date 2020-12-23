@@ -34,6 +34,7 @@ const defaultProps = {
     blurSize: 0,
     randomMotion: true,
     noiseStrength: 1,
+    motionEnabled: true,
 };
 
 /**
@@ -54,6 +55,18 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = (props: IDrifterStarsP
     const mouseRef: MutableRefObject<Point> = useRef<Point>({ x: 0, y: 0 });
     const noicePositionRef: MutableRefObject<Point> = useRef<Point>({ x: 0, y: 0 });
     const noiseRef: MutableRefObject<number> = useRef<number>(0);
+
+    const mouseEventHandlerRef = useRef(function (e: MouseEvent) {
+        mouseRef.current.x = e.clientX;
+        mouseRef.current.y = e.clientY;
+    });
+
+    const deviceOrientHandlerRef = useRef(function (e: DeviceOrientationEvent) {
+        if (canvasRef.current && e.beta && e.gamma) {
+            mouseRef.current.x = canvasRef.current.clientWidth / 2 - (e.gamma / 90) * (canvasRef.current.clientWidth / 2) * 2;
+            mouseRef.current.y = canvasRef.current.clientHeight / 2 - (e.beta / 90) * (canvasRef.current.clientHeight / 2) * 2;
+        }
+    });
 
     function initialize() {
         if (canvasRef.current && contextRef.current) {
@@ -138,22 +151,15 @@ export const DrifterStars: React.FC<IDrifterStarsProps> = (props: IDrifterStarsP
             }
 
             // Motion mode
-            if ('ontouchstart' in document.documentElement && window.DeviceOrientationEvent) {
-                window.addEventListener(
-                    'deviceorientation',
-                    function (e) {
-                        if (canvasRef.current && e.beta && e.gamma) {
-                            mouseRef.current.x = canvasRef.current.clientWidth / 2 - (e.gamma / 90) * (canvasRef.current.clientWidth / 2) * 2;
-                            mouseRef.current.y = canvasRef.current.clientHeight / 2 - (e.beta / 90) * (canvasRef.current.clientHeight / 2) * 2;
-                        }
-                    },
-                    true
-                );
+            if ((motion?.enabled == undefined && defaultProps.motionEnabled) || motion?.enabled) {
+                if ('ontouchstart' in document.documentElement && window.DeviceOrientationEvent) {
+                    window.addEventListener('deviceorientation', deviceOrientHandlerRef.current, true);
+                } else {
+                    document.body.addEventListener('mousemove', mouseEventHandlerRef.current);
+                }
             } else {
-                document.body.addEventListener('mousemove', function (e) {
-                    mouseRef.current.x = e.clientX;
-                    mouseRef.current.y = e.clientY;
-                });
+                window.removeEventListener('deviceorientation', deviceOrientHandlerRef.current);
+                document.body.removeEventListener('mousemove', mouseEventHandlerRef.current);
             }
 
             (function animloop() {

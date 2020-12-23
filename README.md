@@ -2,6 +2,9 @@
 # React Drifter Stars ![build](https://github.com/Devil7-Softwares/react-drifter-stars/workflows/build/badge.svg) ![npm](https://img.shields.io/npm/v/@devil7softwares/react-drifter-stars) ![license](https://img.shields.io/npm/l/@devil7softwares/react-drifter-stars) ![min](https://img.shields.io/bundlephobia/min/@devil7softwares/react-drifter-stars) ![minzip](https://img.shields.io/bundlephobia/minzip/@devil7softwares/react-drifter-stars)
 `Drifter Stars by @cr0ybot ported to React with Typescript support`
 
+## Demo
+View Demos @ [Storybook](https://storybook.devil7softwares.com/?path=/story/drifter-stars)
+
 ## Quick Start
 1. Install package from NPM
 `npm install @devil7softwares/react-drifter-stars`
@@ -68,6 +71,7 @@
 ### IMotionOptions
 |        Prop       |        Type       | Description                                                                                                                           |
 |-------------------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| enabled           | boolean           | Enables/disables moving animation of particles.                                                                                       |
 | ratio             | number            | Amount of motion to be generated. Default is 0.05.<br/>Used to generate motion based on mouse movement/device orientation changes.    |
 | randomMotion      | boolean           | Enables random motions even without user interation.                                                                                  |
 | noiseLength       | number            | Length of noice for random motion.                                                                                                    |

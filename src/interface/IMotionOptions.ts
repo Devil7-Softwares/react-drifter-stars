@@ -1,5 +1,10 @@
 export interface IMotionOptions {
     /**
+     * Enables/disables moving animation of particles.
+     */
+    enabled?: boolean;
+
+    /**
      * Amount of motion to be generated. Default is 0.05. Used to generate motion based on mouse movement/device orientation changes.
      */
     ratio?: number;

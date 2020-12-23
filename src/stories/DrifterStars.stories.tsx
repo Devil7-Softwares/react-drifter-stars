@@ -9,6 +9,7 @@ const StarsStory = (args: Args) => (
         className={args.className}
         color={args.color}
         motion={{
+            enabled: args.motionEnabled,
             ratio: args.motionRatio,
             noiseLength: args.noiseLength,
             randomMotion: args.randomMotion,
@@ -76,6 +77,7 @@ interface Args {
     blurSize: number;
     randomMotion: boolean;
     noiseStrength: number;
+    motionEnabled: boolean;
 }
 
 export const Basic = StarsStory.bind({});
@@ -107,6 +109,7 @@ Basic.args = {
     blurSize: 0,
     randomMotion: true,
     noiseStrength: 1,
+    motionEnabled: true,
 };
 
 export const CustomBackground = StarsStory.bind({});
@@ -143,5 +146,6 @@ export default {
         blurSize: { control: { type: 'number', min: 0, max: 10, step: 1 } },
         randomMotion: { control: { type: 'boolean' } },
         noiseStrength: { control: { type: 'number', min: 1, max: 5, step: 1 } },
+        motionEnabled: { control: { type: 'boolean' } },
     },
 };
