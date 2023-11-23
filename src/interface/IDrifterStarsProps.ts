@@ -46,4 +46,13 @@ export interface IDrifterStarsProps extends HTMLAttributes<HTMLCanvasElement> {
      * Motion/movement options.
      */
     motion?: IMotionOptions;
+
+    /**
+     * On every render the canvas size will be adusted to the window size. If you want to override this behavior, you can use this function.
+     *
+     * @param width Width of the canvas. Defaults to window.innerWidth.
+     * @param height Height of the canvas. Defaults to window.innerHeight.
+     * @returns Object containing width & height of the canvas.
+     */
+    transformCanvasSize?: (width: number, height: number) => { width: number; height: number };
 }
